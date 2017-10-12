@@ -1,4 +1,4 @@
-class player_wagon:
+class PlayerWagon:
     
     def __init__(self, coins):
         self.coins = coins

@@ -1,4 +1,7 @@
-import classes import tile
+from classes.board import Board
+from classes.tile import Tile
+from classes.player_wagon import PlayerWagon
+from functions.generate_board import generate_board
 
 #list of tiles with [name, description, action]
 tiles = [
@@ -24,8 +27,7 @@ tiles = [
 tile_list = []
 
 for t in tiles:
-        tile_list.append(tile.tile(*t))
+        tile_list.append(Tile(*t))
 
-test_board = classes.board(tile_list)
 
-board.print_board()
+generate_board("random")

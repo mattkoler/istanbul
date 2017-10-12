@@ -1,4 +1,4 @@
-class board:
+class Board:
     
     #tiles should be a list of tile class objects
     def __init__(self, tiles):

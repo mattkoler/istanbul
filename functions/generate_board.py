@@ -1,3 +1,5 @@
+import random
+
 def generate_board(order='default'):
     """Generates a board based on the order specified
     None/Default - Ascending order
