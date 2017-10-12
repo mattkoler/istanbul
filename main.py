@@ -24,10 +24,7 @@ tiles = [
         ]
 
 
-tile_list = []
-
-for t in tiles:
-        tile_list.append(Tile(*t))
-
-
 generate_board()
+
+generate_board('balanced')
+

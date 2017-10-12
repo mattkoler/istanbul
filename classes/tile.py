@@ -203,7 +203,7 @@ class SmallMosque(Tile):
     Green - When at a warehouse, may pay 2 Lira for 1 of any resource
     """
 
-    def __init__(self, players)
+    def __init__(self, players):
         self.cost = (2,4) if len(players) == 2 else (2,3,4,5)
         self.gems = min(len(players), 4)
         self.red_cost = self.green_cost = 0
@@ -223,7 +223,7 @@ class GreatMosque(Tile):
     Blue - Get an extra assistant
     """
 
-    def __init__(self, players)
+    def __init__(self, players):
         self.cost = (2,4) if len(players) == 2 else (2,3,4,5)
         self.gems = min(len(players), 4)
         self.yellow_cost = self.blue_cost = 0
@@ -241,7 +241,7 @@ class GemstoneDealer(Tile):
 
     def __init__(self, players):
         self.cost = (12,13,14,15,16,17,18,19,20,21,22,23)
-        self.current = 0 if len(players) >= 4 elif 2 if len(players) == 3 else 3
+        #self.current = 0 if len(players) >= 4 elif 2 if len(players) == 3 else 3
 
     def tile_action(self, players):
         current_cost = self.cost[self.current]
