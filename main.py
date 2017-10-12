@@ -30,4 +30,4 @@ for t in tiles:
         tile_list.append(Tile(*t))
 
 
-generate_board("random")
+generate_board()
