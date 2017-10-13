@@ -1,9 +1,13 @@
 class PlayerWagon:
     
-    def __init__(self, coins):
-        self.coins = coins
+    def __init__(self, player_number):
+        self.coins = 1 + player_number
         self.red = self.yellow = self.green = self.blue = self.gems = 0
         self.item_max = 2
+        self.hand = []
+        self.assistants = 4
+        self.location = 7 #7 is the fountain
+        self.assist_locs = [] #empty because all with player atm
     
     def add_lira(self, lira):
         self.coins += lira
@@ -12,6 +16,7 @@ class PlayerWagon:
         if self.coins < lira:
             return False
         self.coins -= lira
+        return True
     
     def fill_red(self):
         self.red = self.item_max
@@ -61,3 +66,31 @@ class PlayerWagon:
         if self.item_max >= 5:
             return False
         self.item_max += 1
+
+    def remove_assistant(self):
+        if self.assistants > 0:
+            self.assistants -= 1
+            return True
+        return False
+
+    def add_assistant(self):
+        self.assistants += 1
+
+    def get_assistants(self):
+        return self.assistants
+
+    def get_resources(self):
+        #returns a list of resources [red, yellow, green, blue]
+        return [self.red,self.yellow,self.green,self.blue]
+
+    def get_coins(self):
+        return self.coins
+
+    def get_player_loc(self):
+        return self.location
+
+    def get_assistant_loc(self):
+        return self.assist_locs
+
+    
+
