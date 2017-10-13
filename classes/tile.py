@@ -55,6 +55,16 @@ class Wainwright(Tile):
         #check to see if player has room to upgrade
         #take lira, give upgrade, remove 1 wagon piece
         #check to see if player has max upgrades, give gem if so and remove gem
+        if player.item_max() >= 5:
+            write-host("Sorry, you can't upgrade your wagon anymore")
+            return None
+        if player.remove_lira(7):
+            player.add_capacity()
+            write-host("You have upgraded your wagon and can hold {} of each resource now.".format(player.item_max()))
+            if player.item_max() == 5:
+                write-host("You have gotten all 3 upgrades and gained a gem")
+                player.add_gem()
+                self.gems -= 1
         pass
 
 class FabricWarehouse(Tile):
@@ -85,8 +95,7 @@ class PostOffice(Tile):
         self.current = 0
 
     def tile_action(self, player):
-        player.add_lira(self.goods[current][0])
-        for item in self.goods[current][1:]:
+        for item in self.goods[current]:
             if type(item) == 'int':
                 player.add_lira(item)
             elif item == 'G':
@@ -105,7 +114,30 @@ class PostOffice(Tile):
 class Caravansary(Tile):
     """Special class for the Caravansary tile. Allows player to draw 2 cards from either deck
     or the top of the discard pile, then discard 1 from their hand"""
-    #need to implement deck / hand first
+    def __init__(self):
+        self.discard = []
+    
+    def tile_action(self, player):
+        cards_drawn = 0
+        while cards_drawn < 2:
+            if len(self.discard) == 0:
+                card_draw = board.deck_draw()
+                if not card_draw:
+                    write-host('Sorry, there are no cards in deck or discard')
+                    return None
+                write-host('You draw a card from the deck (no discard available).')
+                player.add_card(card_draw)
+            else:
+                choice = ''
+                while choice.lower() not in ('deck', 'discard'):
+                    choice = input('Would you like to draw from the deck or discard?')
+                if choice.lower() == 'deck':
+                    write-host('You draw a card from the deck')
+                    player.add_card(board.deck_draw())
+                else:
+                    write-host('You draw the top card of the discard pile')
+                    player.add_card(self.discard.pop(0))
+            cards_drawn += 1
     pass
 
 class Fountain(Tile):
