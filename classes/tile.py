@@ -23,10 +23,7 @@ class Tile:
     def __init__(self, name, description):
         self.name = name
         self.description = description
-        self.action = None
         self.merchants = []
-        self.assistants = []
-        self.family_members = []
         self.governor = False
         self.smuggler = False
         
@@ -35,12 +32,6 @@ class Tile:
         for m in self.merchants:
             merchs += m + ' '
         return merchs
-    
-    def get_assistants(self):
-        assist = ''
-        for a in self.assistants:
-            assist += a + ' '
-        return assist
 
 class Wainwright(Tile):
     """Special class for the Wainwright tile. Takes in players as a list of player colors
@@ -51,21 +42,21 @@ class Wainwright(Tile):
         self.gems = len(players)
 
     def tile_action(self, player):
-        #check to see if player has 7 lira
-        #check to see if player has room to upgrade
-        #take lira, give upgrade, remove 1 wagon piece
-        #check to see if player has max upgrades, give gem if so and remove gem
+        """
+        check to see if player has room to upgrade
+        check to see if player has 7 lira
+        take lira, give upgrade, remove 1 wagon piece
+        check to see if player has max upgrades, give gem if so and remove gem """
         if player.item_max() >= 5:
-            write-host("Sorry, you can't upgrade your wagon anymore")
+            print("Sorry, you can't upgrade your wagon anymore")
             return None
         if player.remove_lira(7):
             player.add_capacity()
-            write-host("You have upgraded your wagon and can hold {} of each resource now.".format(player.item_max()))
+            print("You have upgraded your wagon and can hold {} of each resource now.".format(player.item_max()))
             if player.item_max() == 5:
-                write-host("You have gotten all 3 upgrades and gained a gem")
+                print("You have gotten all 3 upgrades and gained a gem")
                 player.add_gem()
                 self.gems -= 1
-        pass
 
 class FabricWarehouse(Tile):
     """Special class for the Fabric Warehouse tile. Gives a player max Fabric (red) resource"""
@@ -123,19 +114,19 @@ class Caravansary(Tile):
             if len(self.discard) == 0:
                 card_draw = board.deck_draw()
                 if not card_draw:
-                    write-host('Sorry, there are no cards in deck or discard')
+                    print('Sorry, there are no cards in deck or discard')
                     return None
-                write-host('You draw a card from the deck (no discard available).')
+                print('You draw a card from the deck (no discard available).')
                 player.add_card(card_draw)
             else:
                 choice = ''
                 while choice.lower() not in ('deck', 'discard'):
                     choice = input('Would you like to draw from the deck or discard?')
                 if choice.lower() == 'deck':
-                    write-host('You draw a card from the deck')
+                    print('You draw a card from the deck')
                     player.add_card(board.deck_draw())
                 else:
-                    write-host('You draw the top card of the discard pile')
+                    print('You draw the top card of the discard pile')
                     player.add_card(self.discard.pop(0))
             cards_drawn += 1
     pass
@@ -143,10 +134,19 @@ class Caravansary(Tile):
 class Fountain(Tile):
     """Special class for the Fountain tile. When a player lands here, they may return any amount
     of their assistants to their stack. They also do not pay other merchants on this space."""
-    #loop through other tiles to figure out where player assistants are
-    #ask them which ones they would like to return
-    #make sure to ignore paying lira to other marchants on this tile
-    pass
+    #ask player which assistants they would like to return
+    def tile_action(self, player):
+        for loc in player.assist_locs:
+            while True:
+                ans = input("Would you like to return your assistant at {} to your stack? y/n".format(loc))
+                if ans.lower() == 'y':
+                    player.assist_locs.remove(loc)
+                    player.assistants += 1
+                    break
+                elif ans.lower() == 'n':
+                    break
+                print("Sorry, I didn't quite catch that.")
+    
 
 class BlackMarket(Tile):
     """Special class for the Black Market tile. Allows a player to pick 1 of R/Y/G resource and
@@ -154,15 +154,78 @@ class BlackMarket(Tile):
     #prompt player which R/Y/G they want
     #roll 2d6 for blue (7-8 = 1, 9-10 = 2, 11-12 = 3)
     #make sure to check for special ability
-    pass
+    def tile_action(self, player):
+        while True:
+            ans = input("What resource would you like 1 of? r/y/g")
+            if ans.lower() == 'r':
+                player.add_red()
+                break
+            elif ans.lower() == 'y':
+                player.add_yellow()
+                break
+            elif ans.lower() == 'g':
+                player.add_green
+                break
+            print("Sorry I didn't catch that.")
+        if player.red_building:
+            roll = (random.randint(1,6),random.randint(1,6))
+            print("You rolled a {} and a {} for a total of {}.".format(roll[0],roll[1],sum(roll)))
+            while True:
+                ans = input("You may (c)hange the {} into a 4, (r)eroll, or (a)ccept the roll: ".format(min(roll)))
+                if ans.lower() == 'c':
+                    roll = (max(roll),4)
+                    break
+                elif ans.lower() == 'r':
+                    roll = (random.randint(1,6),random.randint(1,6))
+                    break
+                elif ans.lower() == 'a':
+                    break
+                print("Sorry I didn't catch that.")
+        else:
+            roll = (random.randint(1,6),random.randint(1,6))
+            print("You rolled a {} and a {} for a total of {}.".format(roll[0],roll[1],sum(roll)))
+        total = sum(roll)
+        if total > 6:
+            player.add_blue()
+        if total > 8:
+            player.add_blue()
+        if total > 10:
+            player.add_blue()
 
+            
 class TeaHouse(Tile):
     """Special class for the Tea House tile. Allows the player to name a number then roll dice
     to get the named number in Lira if the dice are >=. If fail, player gets 2 Lira"""
     #prompt player to choose a number between 3-12
     #roll dice
     #pay number or 2 Lira
-    pass
+
+    def tile_action(self, player):
+        target = input("Please choose a number: ")
+    if player.red_building:
+        roll = (random.randint(1,6),random.randint(1,6))
+        print("You rolled a {} and a {} for a total of {}.".format(roll[0],roll[1],sum(roll)))
+        while True:
+            ans = input("You may (c)hange the {} into a 4, (r)eroll, or (a)ccept the roll: ".format(min(roll)))
+            if ans.lower() == 'c':
+                roll = (max(roll),4)
+                break
+            elif ans.lower() == 'r':
+                roll = (random.randint(1,6),random.randint(1,6))
+                break
+            elif ans.lower() == 'a':
+                break
+            print("Sorry I didn't catch that.")
+    else:
+        roll = (random.randint(1,6),random.randint(1,6))
+        print("You rolled a {} and a {} for a total of {}.".format(roll[0],roll[1],sum(roll)))
+    total = sum(roll)
+    if total >= target:
+        player.add_lira(target)
+        print("Congrats, you rolled a total of {} and got your {} Lira.".format(total,target))
+    else:
+        player.add_lira(2)
+        print("Sorry, you only rolled a total of {} which is below your target of {}. You still gain 2 Lira.".format(total,target))
 
 class SmallMarket(Tile):
     """Special class for the Small Market tile. Allows players to sell resources for Lira depending
@@ -170,16 +233,39 @@ class SmallMarket(Tile):
     Payouts for 1/2/3/4/5 resources are 2/5/9/14/20"""
     def __init__(self):
         self.demands = (
-            ('B','R','G','Y','Y'),
+            ('b','r','g','y','y'),
             #TODO: add other tiles
         )
         self.current = 0
+        self.lira= (2,5,9,14,20)
 
-    #look at current demand and ask player what they want to sell
-    #check to make sure player has required resources
-    #remove resources and give Lira
-    #rotate demand
-    pass
+    def tile_action(self, player):
+        print("The market is currently buying {} resources.".format(self.demand[self.curren]))
+        while True:
+            ans = input("What would you like to sell? (ex. rrb for 2 reds and a blue): ")
+            test_demand = list(self.demands[self.current])
+            bad_ans = False
+            for c in ans:
+                try:
+                    test_demand.remove(c)
+                except ValueError:
+                    print("Sorry you can't sell this combination: {}".format(ans))
+                    bad_ans = True
+                    break
+            if bad_ans:
+                continue
+            if not player.check_resources(list(ans)):
+                print("Sorry you don't have those resources to sell")
+                continue
+            break
+        #TODO: remove resources
+        player.add_lira(self.lira[len(ans)])
+        self.current += 1
+        if self.current >= 5:
+            self.current = 0
+
+        
+
 
 class LargeMarket(Tile):
     """Special class for the Large Market tile. Allows players to sell resources for Lira depending
@@ -273,11 +359,15 @@ class GemstoneDealer(Tile):
 
     def __init__(self, players):
         self.cost = (12,13,14,15,16,17,18,19,20,21,22,23)
-        #self.current = 0 if len(players) >= 4 elif 2 if len(players) == 3 else 3
+        if len(players) >= 4:
+            self.current = 0 
+        elif len(players) == 3:
+            self.current = 2
+        else:
+            self.current = 3
 
     def tile_action(self, players):
         current_cost = self.cost[self.current]
         if player.remove_lira(current_cost):
             player.add_gem()
             self.current += 1
-    pass

@@ -3,6 +3,21 @@ from classes.tile import Tile
 from classes.player_wagon import PlayerWagon
 from functions.generate_board import generate_board
 
+"""
+General design:
+
+Classes
+Board - contains a list of tile objects and deck of cards
+PlayerWagon - class representing the player and keeps track of resources, hand, Lira, assistants, buildings
+Tile - parent class for a game tile that contains the merchants (players or neutral), governor, and smuggler
+Tile children - named for the tile, contains the tile's action and varying other attributes that need to be tracked
+
+Functions
+generate_board - generate board in several configurations
+take_turn - step through the phases of a turn
+
+"""
+
 #list of tiles with [name, description, action]
 tiles = [
         ['Wainwright', 'Pay 7 Lira to increase you item capacity (max 3 upgrade or 5 items). Get 1 gem for getting to max.'],

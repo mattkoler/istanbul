@@ -8,6 +8,7 @@ class PlayerWagon:
         self.assistants = 4
         self.location = 7 #7 is the fountain
         self.assist_locs = [] #empty because all with player atm
+        self.red_building = self.yellow_building = self.green_building = self.blue_building = False
     
     def add_lira(self, lira):
         self.coins += lira
@@ -91,6 +92,19 @@ class PlayerWagon:
 
     def get_assistant_loc(self):
         return self.assist_locs
+
+    def check_resources(self, resources):
+        """Takes in a list of single letter lower case resources to check ['r','g','b','b'] and returns True/False"""
+        if self.red < resources.count('r'):
+            return False
+        if self.green < resources.count('g'):
+            return False
+        if self.yellow < resources.count('y'):
+            return False
+        if self.blue < resources.count('b'):
+            return False
+        return True
+
 
     
 
