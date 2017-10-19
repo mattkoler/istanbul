@@ -20,9 +20,7 @@ tiles = [
 
 class Tile:
     
-    def __init__(self, name, description):
-        self.name = name
-        self.description = description
+    def __init__(self):
         self.merchants = []
         self.governor = False
         self.smuggler = False
@@ -36,10 +34,10 @@ class Tile:
 class Wainwright(Tile):
     """Special class for the Wainwright tile. Takes in players as a list of player colors
     e.g. [R,G,Y] for 3 players of colors Red, Green, and Yellow"""
-    def __init__(self, players):
-        self.players = players
-        self.sp_resource = ['Wagon Pieces', 3*len(players)]
-        self.gems = len(players)
+    def __init__(self, num_players):
+        self.num_players = self.gems = num_players
+        self.name = "Wainwright"
+        self.sp_resource = ['Wagon Pieces', 3*num_players]
 
     def tile_action(self, player):
         """
@@ -60,22 +58,33 @@ class Wainwright(Tile):
 
 class FabricWarehouse(Tile):
     """Special class for the Fabric Warehouse tile. Gives a player max Fabric (red) resource"""
+    def __init__(self):
+        self.name = "Fabric Warehouse"
+
     def tile_action(self, player):
         player.fill_red()
 
 class SpiceWarehouse(Tile):
     """Special class for the Spice Warehouse tile. Gives a player max Spice (green) resource"""
+    def __init__(self):
+        self.name = "Spice Warehouse"
+
     def tile_action(self, player):
         player.fill_green()
 
 class FruitWarehouse(Tile):
     """Special class for the Fruit Warehouse tile. Gives a player max Fruit (yellow) resource"""
+    def __init__(self):
+        self.name = "Fruit Warehouse"
+
     def tile_action(self, player):
         player.fill_yellow()
 
 class PostOffice(Tile):
     """Special class for the Post Office tile. Gives a rotating set of Goods and Lira"""
+
     def __init__(self):
+        self.name = "Post Office"
         self.goods = (
             (2, 'G', 'Y'),
             (2, 'R', 'Y'),
@@ -107,6 +116,7 @@ class Caravansary(Tile):
     or the top of the discard pile, then discard 1 from their hand"""
     def __init__(self):
         self.discard = []
+        self.name = "Caravansary"
     
     def tile_action(self, player):
         cards_drawn = 0
@@ -134,6 +144,9 @@ class Caravansary(Tile):
 class Fountain(Tile):
     """Special class for the Fountain tile. When a player lands here, they may return any amount
     of their assistants to their stack. They also do not pay other merchants on this space."""
+    def __init__(self):
+        self.name = "Fountain"
+
     #ask player which assistants they would like to return
     def tile_action(self, player):
         for loc in player.assist_locs:
@@ -154,6 +167,9 @@ class BlackMarket(Tile):
     #prompt player which R/Y/G they want
     #roll 2d6 for blue (7-8 = 1, 9-10 = 2, 11-12 = 3)
     #make sure to check for special ability
+    def __init__(self):
+        self.name = "Black Market"
+
     def tile_action(self, player):
         while True:
             ans = input("What resource would you like 1 of? r/y/g")
@@ -196,42 +212,46 @@ class BlackMarket(Tile):
 class TeaHouse(Tile):
     """Special class for the Tea House tile. Allows the player to name a number then roll dice
     to get the named number in Lira if the dice are >=. If fail, player gets 2 Lira"""
+    def __init__(self):
+        self.name = "Tea House"
+
     #prompt player to choose a number between 3-12
     #roll dice
     #pay number or 2 Lira
 
     def tile_action(self, player):
         target = input("Please choose a number: ")
-    if player.red_building:
-        roll = (random.randint(1,6),random.randint(1,6))
-        print("You rolled a {} and a {} for a total of {}.".format(roll[0],roll[1],sum(roll)))
-        while True:
-            ans = input("You may (c)hange the {} into a 4, (r)eroll, or (a)ccept the roll: ".format(min(roll)))
-            if ans.lower() == 'c':
-                roll = (max(roll),4)
-                break
-            elif ans.lower() == 'r':
-                roll = (random.randint(1,6),random.randint(1,6))
-                break
-            elif ans.lower() == 'a':
-                break
-            print("Sorry I didn't catch that.")
-    else:
-        roll = (random.randint(1,6),random.randint(1,6))
-        print("You rolled a {} and a {} for a total of {}.".format(roll[0],roll[1],sum(roll)))
-    total = sum(roll)
-    if total >= target:
-        player.add_lira(target)
-        print("Congrats, you rolled a total of {} and got your {} Lira.".format(total,target))
-    else:
-        player.add_lira(2)
-        print("Sorry, you only rolled a total of {} which is below your target of {}. You still gain 2 Lira.".format(total,target))
+        if player.red_building:
+            roll = (random.randint(1,6),random.randint(1,6))
+            print("You rolled a {} and a {} for a total of {}.".format(roll[0],roll[1],sum(roll)))
+            while True:
+                ans = input("You may (c)hange the {} into a 4, (r)eroll, or (a)ccept the roll: ".format(min(roll)))
+                if ans.lower() == 'c':
+                    roll = (max(roll),4)
+                    break
+                elif ans.lower() == 'r':
+                    roll = (random.randint(1,6),random.randint(1,6))
+                    break
+                elif ans.lower() == 'a':
+                    break
+                print("Sorry I didn't catch that.")
+        else:
+            roll = (random.randint(1,6),random.randint(1,6))
+            print("You rolled a {} and a {} for a total of {}.".format(roll[0],roll[1],sum(roll)))
+        total = sum(roll)
+        if total >= target:
+            player.add_lira(target)
+            print("Congrats, you rolled a total of {} and got your {} Lira.".format(total,target))
+        else:
+            player.add_lira(2)
+            print("Sorry, you only rolled a total of {} which is below your target of {}. You still gain 2 Lira.".format(total,target))
 
 class SmallMarket(Tile):
     """Special class for the Small Market tile. Allows players to sell resources for Lira depending
     on the amount of resources sold. The resource demand rotates through several tiles.
     Payouts for 1/2/3/4/5 resources are 2/5/9/14/20"""
     def __init__(self):
+        self.name = "Small Market"
         self.demands = (
             ('b','r','g','y','y'),
             #TODO: add other tiles
@@ -273,6 +293,7 @@ class LargeMarket(Tile):
     Payouts for 1/2/3/4/5 resources are 3/7/12/18/25"""
 
     def __init__(self):
+        self.name = "Large Market"
         self.demands = (
             ('R','B','B','G','Y'),
             #TODO: add other tiles
@@ -289,6 +310,8 @@ class PoliceStation(Tile):
     """Special class for the Police Station tile. Allows players to send their family member to
     any other tile and take the action there ignoring any other merchants."""
 
+    def __init__(self):
+        self.name = "Police Station"
     #set all family members here on start
 
     #check that the player has a family member here, otherwise pass
@@ -300,12 +323,13 @@ class SultansPalace(Tile):
     """Special class for the Sultan's Palace tile. Allows players to trade goods for gems with
     each subsequent gem requiring more goods"""
 
-    def __init__(self, players):
-        self.players = len(players)
+    def __init__(self, num_players):
+        self.name = "Sultan's Palace"
+        self.players = num_players
         self.cost = ('B','R','G','Y','A','B','R','G','Y','A')
-        self.current = 4 if players > 3 else 5
+        self.current = 4 if num_players > 3 else 5
 
-    def tile_action(self,player):
+    def tile_action(self, player):
         current_cost = self.cost[:self.current]
         #query player to see if they have the resources
         #ask player what resources to spend for the any
@@ -321,9 +345,10 @@ class SmallMosque(Tile):
     Green - When at a warehouse, may pay 2 Lira for 1 of any resource
     """
 
-    def __init__(self, players):
-        self.cost = (2,4) if len(players) == 2 else (2,3,4,5)
-        self.gems = min(len(players), 4)
+    def __init__(self, num_players):
+        self.name = "Small Mosque"
+        self.cost = (2,4) if num_players == 2 else (2,3,4,5)
+        self.gems = min(num_players, 4)
         self.red_cost = self.green_cost = 0
 
     def tile_action(self, player):
@@ -341,9 +366,10 @@ class GreatMosque(Tile):
     Blue - Get an extra assistant
     """
 
-    def __init__(self, players):
-        self.cost = (2,4) if len(players) == 2 else (2,3,4,5)
-        self.gems = min(len(players), 4)
+    def __init__(self, num_players):
+        self.name = "Great Mosque"
+        self.cost = (2,4) if num_players == 2 else (2,3,4,5)
+        self.gems = min(num_players, 4)
         self.yellow_cost = self.blue_cost = 0
 
     def tile_action(self, player):
@@ -357,11 +383,12 @@ class GreatMosque(Tile):
 class GemstoneDealer(Tile):
     """Special class for Gemstone Dealer tile. Allows players to purchase gems for increasing cost"""
 
-    def __init__(self, players):
+    def __init__(self, num_players):
+        self.name = "Gemstone Dealer"
         self.cost = (12,13,14,15,16,17,18,19,20,21,22,23)
-        if len(players) >= 4:
+        if num_players >= 4:
             self.current = 0 
-        elif len(players) == 3:
+        elif num_players == 3:
             self.current = 2
         else:
             self.current = 3
