@@ -22,8 +22,8 @@ class Tile:
     
     def __init__(self):
         self.merchants = []
-        self.governor = False
-        self.smuggler = False
+        self.assistants = []
+        self.governor = self.smuggler = False
         
     def get_merchants(self):
         merchs = ''
@@ -31,10 +31,17 @@ class Tile:
             merchs += m + ' '
         return merchs
 
+    def get_assistants(self):
+        assistants = ''
+        for assist in self.assistants:
+            assistants += assist + ' '
+        return assistants
+
 class Wainwright(Tile):
     """Special class for the Wainwright tile. Takes in players as a list of player colors
     e.g. [R,G,Y] for 3 players of colors Red, Green, and Yellow"""
     def __init__(self, num_players):
+        super().__init__()
         self.num_players = self.gems = num_players
         self.name = "Wainwright"
         self.sp_resource = ['Wagon Pieces', 3*num_players]
@@ -59,6 +66,7 @@ class Wainwright(Tile):
 class FabricWarehouse(Tile):
     """Special class for the Fabric Warehouse tile. Gives a player max Fabric (red) resource"""
     def __init__(self):
+        super().__init__()
         self.name = "Fabric Warehouse"
 
     def tile_action(self, player):
@@ -67,6 +75,7 @@ class FabricWarehouse(Tile):
 class SpiceWarehouse(Tile):
     """Special class for the Spice Warehouse tile. Gives a player max Spice (green) resource"""
     def __init__(self):
+        super().__init__()
         self.name = "Spice Warehouse"
 
     def tile_action(self, player):
@@ -75,6 +84,7 @@ class SpiceWarehouse(Tile):
 class FruitWarehouse(Tile):
     """Special class for the Fruit Warehouse tile. Gives a player max Fruit (yellow) resource"""
     def __init__(self):
+        super().__init__()
         self.name = "Fruit Warehouse"
 
     def tile_action(self, player):
@@ -84,6 +94,7 @@ class PostOffice(Tile):
     """Special class for the Post Office tile. Gives a rotating set of Goods and Lira"""
 
     def __init__(self):
+        super().__init__()
         self.name = "Post Office"
         self.goods = (
             (2, 'G', 'Y'),
@@ -115,6 +126,7 @@ class Caravansary(Tile):
     """Special class for the Caravansary tile. Allows player to draw 2 cards from either deck
     or the top of the discard pile, then discard 1 from their hand"""
     def __init__(self):
+        super().__init__()
         self.discard = []
         self.name = "Caravansary"
     
@@ -145,6 +157,7 @@ class Fountain(Tile):
     """Special class for the Fountain tile. When a player lands here, they may return any amount
     of their assistants to their stack. They also do not pay other merchants on this space."""
     def __init__(self):
+        super().__init__()
         self.name = "Fountain"
 
     #ask player which assistants they would like to return
@@ -168,6 +181,7 @@ class BlackMarket(Tile):
     #roll 2d6 for blue (7-8 = 1, 9-10 = 2, 11-12 = 3)
     #make sure to check for special ability
     def __init__(self):
+        super().__init__()
         self.name = "Black Market"
 
     def tile_action(self, player):
@@ -213,6 +227,7 @@ class TeaHouse(Tile):
     """Special class for the Tea House tile. Allows the player to name a number then roll dice
     to get the named number in Lira if the dice are >=. If fail, player gets 2 Lira"""
     def __init__(self):
+        super().__init__()
         self.name = "Tea House"
 
     #prompt player to choose a number between 3-12
@@ -251,6 +266,7 @@ class SmallMarket(Tile):
     on the amount of resources sold. The resource demand rotates through several tiles.
     Payouts for 1/2/3/4/5 resources are 2/5/9/14/20"""
     def __init__(self):
+        super().__init__()
         self.name = "Small Market"
         self.demands = (
             ('b','r','g','y','y'),
@@ -293,6 +309,7 @@ class LargeMarket(Tile):
     Payouts for 1/2/3/4/5 resources are 3/7/12/18/25"""
 
     def __init__(self):
+        super().__init__()
         self.name = "Large Market"
         self.demands = (
             ('R','B','B','G','Y'),
@@ -311,6 +328,7 @@ class PoliceStation(Tile):
     any other tile and take the action there ignoring any other merchants."""
 
     def __init__(self):
+        super().__init__()
         self.name = "Police Station"
     #set all family members here on start
 
@@ -324,6 +342,7 @@ class SultansPalace(Tile):
     each subsequent gem requiring more goods"""
 
     def __init__(self, num_players):
+        super().__init__()
         self.name = "Sultan's Palace"
         self.players = num_players
         self.cost = ('B','R','G','Y','A','B','R','G','Y','A')
@@ -346,6 +365,7 @@ class SmallMosque(Tile):
     """
 
     def __init__(self, num_players):
+        super().__init__()
         self.name = "Small Mosque"
         self.cost = (2,4) if num_players == 2 else (2,3,4,5)
         self.gems = min(num_players, 4)
@@ -367,6 +387,7 @@ class GreatMosque(Tile):
     """
 
     def __init__(self, num_players):
+        super().__init__()
         self.name = "Great Mosque"
         self.cost = (2,4) if num_players == 2 else (2,3,4,5)
         self.gems = min(num_players, 4)
@@ -384,6 +405,7 @@ class GemstoneDealer(Tile):
     """Special class for Gemstone Dealer tile. Allows players to purchase gems for increasing cost"""
 
     def __init__(self, num_players):
+        super().__init__()
         self.name = "Gemstone Dealer"
         self.cost = (12,13,14,15,16,17,18,19,20,21,22,23)
         if num_players >= 4:
