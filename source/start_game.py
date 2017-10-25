@@ -45,8 +45,6 @@ def start_game():
             tile.merchants = p_objects
         if tile.name == gov:
             tile.governor = True
-            print(tile.name + 'set governor')
-            print(tile.governor)
         if tile.name == smug:
             tile.smuggler = True
     print("Here is your board:")
