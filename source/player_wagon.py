@@ -1,6 +1,7 @@
 class PlayerWagon:
     
-    def __init__(self, player_number):
+    def __init__(self, color, player_number):
+        self.color = color
         self.coins = 1 + player_number
         self.red = self.yellow = self.green = self.blue = self.gems = 0
         self.item_max = 2
