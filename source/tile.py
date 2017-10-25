@@ -29,13 +29,13 @@ class Tile:
     def get_merchants(self):
         merchs = ''
         for m in self.merchants:
-            merchs += m + ' '
+            merchs += m.color
         return merchs
 
     def get_assistants(self):
         assistants = ''
         for assist in self.assistants:
-            assistants += assist + ' '
+            assistants += assist
         return assistants
 
     def get_family(self):
@@ -50,11 +50,11 @@ class Tile:
 
     def get_second_row(self):
         '''returns mercs and assistants in 18 char str'''
-        return ' M: {:<5} A: {:<6}'.format(self.get_merchants(), self.get_assistants())
+        return ' M:{:<7} A:{:<6}'.format(self.get_merchants(), self.get_assistants())
 
     def get_third_row(self):
         '''returns family, smuggler, and governor in 18 char str'''
-        return ' F: {:<5} {:<4} {:<4}'.format(self.get_family(), 'G' if self.governor else '', 'S' if self.smuggler else '')
+        return ' F: {:<5} {:>4} {:<4}'.format(self.get_family(), 'G' if self.governor else '', 'S' if self.smuggler else '')
 
 class Wainwright(Tile):
     """Special class for the Wainwright tile. Takes in players as a list of player colors
