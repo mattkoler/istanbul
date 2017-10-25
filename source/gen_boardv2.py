@@ -1,9 +1,9 @@
 import random
 import tile as t
 
-def generate_board(num_players, order='default'):
+def generate_board(num_players, order):
     """Generates a board based on the order specified
-    None/Default - Ascending order
+    Default - Ascending order
     Shortest - Tiles with synergies placed close together
     Farthest - Tiles with synergies placed far apart
     Random - Random layout that follows  book rules
