@@ -4,6 +4,7 @@ from board import Board
 from player_wagon import PlayerWagon
 from convert_tile import tile_num_to_name
 from random import randint
+import copy
 
 def start_game():
     """Asks how many players, what colors, and board generation
@@ -49,7 +50,6 @@ def start_game():
             tile.smuggler = True
     print("Here is your board:")
     game_board.print_board()
-    
 
 
 start_game()
