@@ -7,8 +7,8 @@ from random import randint
 
 def start_game():
     """Asks how many players, what colors, and board generation
-    Then instantiates a board, TODO: a player object for each color,
-        determines turn order, and TODO: gives out Lira for turn position
+    Then instantiates a board, a player object for each color,
+        determines turn order, and gives out Lira for turn position
     Returns a board object and turn order
     """
 
@@ -29,17 +29,17 @@ def start_game():
     p_colors = p_colors[starting_player-1:] + p_colors[:starting_player-1]
     p_objects = []
     for i,p_col in enumerate(p_colors):
-        p_objects.append(PlayerWagon(p_col[:1],i+1))
+        p_objects.append(PlayerWagon(p_col,i+1))
 
     #ask how the board should be generated
     gen_options = ['default', 'shortest', 'farthest', 'random', 'balanced']
     gen = input_from_list("How would you like to generate the board? ", gen_options)
     game_board = Board(generate_board(num_players, gen))
 
+
     #put all players at the fountain tile and set governor and smuggler
     gov = tile_num_to_name(randint(1,6) + randint(1,6))
     smug = tile_num_to_name(randint(1,6) + randint(1,6))
-    print(gov,smug)
     for tile in game_board.tiles:
         if tile.name == "Fountain":
             tile.merchants = p_objects
@@ -49,7 +49,5 @@ def start_game():
             tile.smuggler = True
     print("Here is your board:")
     game_board.print_board()
-    
 
-
-start_game()
+    return(game_board, p_objects)
