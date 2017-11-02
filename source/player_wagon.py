@@ -7,7 +7,7 @@ class PlayerWagon:
         self.item_max = 2
         self.hand = []
         self.assistants = 4
-        self.location = 7 #7 is the fountain
+        self.location = 'Fountain'
         self.assist_locs = [] #empty because all with player atm
         self.red_building = self.yellow_building = self.green_building = self.blue_building = False
     
