@@ -21,29 +21,30 @@ def generate_board(num_players, order):
             - Black Market (8)
             - Tea house (9)
             - Police Station (12)
+    Returns a list of tile objects
     """
     #tiles in ascending (red numbers) order
     tiles = [
-        t.Wainwright(num_players),   #0
-        t.FabricWarehouse(),         #1
-        t.SpiceWarehouse(),          #2
-        t.FruitWarehouse(),          #3
-        t.PostOffice(),              #4
-        t.Caravansary(),             #5
-        t.Fountain(),                #6
-        t.BlackMarket(),             #7
-        t.TeaHouse(),                #8
-        t.SmallMarket(),             #9
-        t.LargeMarket(),             #10
-        t.PoliceStation(),           #11
-        t.SultansPalace(num_players),#12
-        t.SmallMosque(num_players),  #13
-        t.GreatMosque(num_players),  #14
-        t.GemstoneDealer(num_players)#15
+        t.Wainwright(num_players),   
+        t.FabricWarehouse(),         
+        t.SpiceWarehouse(),          
+        t.FruitWarehouse(),          
+        t.PostOffice(),              
+        t.Caravansary(),             
+        t.Fountain(),                
+        t.BlackMarket(),             
+        t.TeaHouse(),                
+        t.SmallMarket(),             
+        t.LargeMarket(),             
+        t.PoliceStation(),           
+        t.SultansPalace(num_players),
+        t.SmallMosque(num_players),  
+        t.GreatMosque(num_players),  
+        t.GemstoneDealer(num_players)
     ]
 
     if order.lower() == 'default':
-        return tiles
+        return tiles,board_location
     elif order.lower() == 'shortest':
         #tiles in blue number order
         layout = [14, 4, 1, 13, 3, 11, 6, 2, 7, 5, 10, 8, 12, 9, 0, 15]
@@ -146,9 +147,9 @@ def generate_board(num_players, order):
             remaining = [0,1,2,3,4,9,10,11,12,13,14]
             random.shuffle(remaining)
             special = 0
-            if abs(black_market//4 - fountain//4) + abs(black_market%4 + fountain%4) <= 2:
+            if abs(black_market//4 - fountain//4) + abs(black_market%4 - fountain%4) <= 2:
                 special += 1
-            if abs(tea_house//4 - fountain//4) + abs(tea_house%4 + fountain%4) <= 2:
+            if abs(tea_house//4 - fountain//4) + abs(tea_house%4 - fountain%4) <= 2:
                 special += 1
             for i in range(16):
                 if test_balanced[i] != False:
