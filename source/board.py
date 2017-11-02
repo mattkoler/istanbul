@@ -5,6 +5,9 @@ class Board:
     def __init__(self, tiles):
         """takes in a list of tiles which are all tile class objects"""
         self.tiles = tiles
+        self.loc_map = {}
+        for i,tile in enumerate(self.tiles):
+            self.loc_map[tile.name] = i
         self.deck = ["Gain 1 resource",] * 4 + \
             ["Gain 5 Lira",] * 4 + \
             ["Carry out Sultan's Palace action an additional time",] * 2 + \
@@ -32,3 +35,15 @@ class Board:
             print('|{}|{}|{}|{}|'.format(*(n.get_second_row() for n in row)))
             print('|{}|{}|{}|{}|'.format(*(n.get_third_row() for n in row)))
             print('+-------------------+-------------------+-------------------+-------------------+')
+
+    def get_tile_loc(self,name):
+        try:
+            return self.loc_map[name]
+        except:
+            return False
+
+    def get_tile_name(self,loc):
+        try:
+            return [key for key, value in self.loc_map.items() if value == loc]
+        except:
+            return False
