@@ -29,7 +29,7 @@ class Tile:
     def get_merchants(self):
         merchs = ''
         for m in self.merchants:
-            merchs += m.color[0]
+            merchs += m[0]
         return merchs
 
     def get_assistants(self):
@@ -61,6 +61,19 @@ class Tile:
             self.assistant.remove(player_color)
             return True
         return False
+
+    def add_merchant(self, player_color):
+        if player_color in self.merchants:
+            return False
+        self.merchants.append(player_color)
+        return True
+
+    def remove_merchant(self, player_color):
+        if player_color in self.merchants:
+            self.merchants.remove(player_color)
+            return True
+        return False
+
 
 class Wainwright(Tile):
     """Special class for the Wainwright tile. Takes in players as a list of player colors
