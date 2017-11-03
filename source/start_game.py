@@ -42,7 +42,8 @@ def start_game():
     smug = tile_num_to_name(randint(1,6) + randint(1,6))
     for tile in game_board.tiles:
         if tile.name == "Fountain":
-            tile.merchants = p_objects
+            for p in p_objects:
+                tile.merchants.append(p.color)
         if tile.name == gov:
             tile.governor = True
         if tile.name == smug:
