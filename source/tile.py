@@ -1,4 +1,4 @@
-#list of tiles with [name, description, id]
+# list of tiles with [name, description, id]
 tiles = [
         ['Wainwright', 'Pay 7 Lira to increase you item capacity (max 3 upgrade or 5 items). Get 1 gem for getting to max.', 1],
         ['Fabric Warehouse', 'Fill up your wagon with the fabric (red) resource', 2],
@@ -19,7 +19,8 @@ tiles = [
         ]
 
 class Tile:
-    
+    """A Tile superclass keeps track of the name, merchants, assistants, family members, governor, and smuggler"""
+
     def __init__(self):
         self.merchants = []
         self.assistants = []
@@ -27,22 +28,13 @@ class Tile:
         self.governor = self.smuggler = False
         
     def get_merchants(self):
-        merchs = ''
-        for m in self.merchants:
-            merchs += m[0]
-        return merchs
+        return ''.join([m[0] for m in self.merchants])
 
     def get_assistants(self):
-        assistants = ''
-        for assist in self.assistants:
-            assistants += assist[0]
-        return assistants
+        return ''.join([a[0] for a in self.assistants])
 
     def get_family(self):
-        family = ''
-        for fam in self.family:
-            family += fam + ' '
-        return family
+        return ' '.join([f[0] for f in self.family])
 
     def get_first_row(self):
         '''returns name centered in 18 char str'''
@@ -82,7 +74,7 @@ class Wainwright(Tile):
         super().__init__()
         self.num_players = self.gems = num_players
         self.name = "Wainwright"
-        self.sp_resource = ['Wagon Pieces', 3*num_players]
+        self.pieces = 3*num_players
 
     def tile_action(self, player):
         """
@@ -181,7 +173,7 @@ class Caravansary(Tile):
             else:
                 choice = ''
                 while choice.lower() not in ('deck', 'discard'):
-                    choice = input('Would you like to draw from the deck or discard?')
+                    choice = input('Would you like to draw from the deck or discard?') # TODO: refactor to sanitised
                 if choice.lower() == 'deck':
                     print('You draw a card from the deck')
                     player.add_card(board.deck_draw())
@@ -198,13 +190,13 @@ class Fountain(Tile):
         super().__init__()
         self.name = "Fountain"
 
-    #ask player which assistants they would like to return
+    # ask player which assistants they would like to return
     def tile_action(self, player):
         for loc in player.assist_locs:
             while True:
-                ans = input("Would you like to return your assistant at {} to your stack? y/n".format(loc))
+                ans = input("Would you like to return your assistant at {} to your stack? y/n".format(loc)) # TODO: refactor to sanitised
                 if ans.lower() == 'y':
-                    player.assist_locs.remove(loc)
+                    player.assist_locs.remove(loc) # TODO: Change to helper function
                     player.assistants += 1
                     break
                 elif ans.lower() == 'n':
@@ -215,16 +207,16 @@ class Fountain(Tile):
 class BlackMarket(Tile):
     """Special class for the Black Market tile. Allows a player to pick 1 of R/Y/G resource and
     roll dice to try to get blue"""
-    #prompt player which R/Y/G they want
-    #roll 2d6 for blue (7-8 = 1, 9-10 = 2, 11-12 = 3)
-    #make sure to check for special ability
+    # prompt player which R/Y/G they want
+    # roll 2d6 for blue (7-8 = 1, 9-10 = 2, 11-12 = 3)
+    # make sure to check for special ability
     def __init__(self):
         super().__init__()
         self.name = "Black Market"
 
     def tile_action(self, player):
         while True:
-            ans = input("What resource would you like 1 of? r/y/g")
+            ans = input("What resource would you like 1 of? r/y/g") # TODO: Change to sanitised module
             if ans.lower() == 'r':
                 player.add_red()
                 break
@@ -236,15 +228,15 @@ class BlackMarket(Tile):
                 break
             print("Sorry I didn't catch that.")
         if player.red_building:
-            roll = (random.randint(1,6),random.randint(1,6))
+            roll = (random.randint(1,6),random.randint(1,6)) # TODO: change to roller module
             print("You rolled a {} and a {} for a total of {}.".format(roll[0],roll[1],sum(roll)))
             while True:
-                ans = input("You may (c)hange the {} into a 4, (r)eroll, or (a)ccept the roll: ".format(min(roll)))
+                ans = input("You may (c)hange the {} into a 4, (r)eroll, or (a)ccept the roll: ".format(min(roll))) # TODO: Change to sanitised module
                 if ans.lower() == 'c':
                     roll = (max(roll),4)
                     break
                 elif ans.lower() == 'r':
-                    roll = (random.randint(1,6),random.randint(1,6))
+                    roll = (random.randint(1,6),random.randint(1,6)) # TODO: change to roller module
                     break
                 elif ans.lower() == 'a':
                     break
@@ -268,11 +260,11 @@ class TeaHouse(Tile):
         super().__init__()
         self.name = "Tea House"
 
-    #prompt player to choose a number between 3-12
-    #roll dice
-    #pay number or 2 Lira
+    # prompt player to choose a number between 3-12
+    # roll dice
+    # pay number or 2 Lira
 
-    def tile_action(self, player):
+    def tile_action(self, player): # TODO: Refactor to sanitised module and combine 270/1 + 284/5
         target = input("Please choose a number: ")
         if player.red_building:
             roll = (random.randint(1,6),random.randint(1,6))
@@ -306,17 +298,18 @@ class SmallMarket(Tile):
     def __init__(self):
         super().__init__()
         self.name = "Small Market"
-        self.demands = (
+        self.demands = [
             ('b','r','g','y','y'),
-            #TODO: add other tiles
-        )
+            # TODO: add other tiles
+        ]
+        shuffle(self.demands)
         self.current = 0
         self.lira= (2,5,9,14,20)
 
     def tile_action(self, player):
         print("The market is currently buying {} resources.".format(self.demand[self.curren]))
         while True:
-            ans = input("What would you like to sell? (ex. rrb for 2 reds and a blue): ")
+            ans = input("What would you like to sell? (ex. rrb for 2 reds and a blue): ") # TODO: Change to sanitised module
             test_demand = list(self.demands[self.current])
             bad_ans = False
             for c in ans:
@@ -332,16 +325,13 @@ class SmallMarket(Tile):
                 print("Sorry you don't have those resources to sell")
                 continue
             break
-        #TODO: remove resources
+        # TODO: remove resources
         player.add_lira(self.lira[len(ans)])
         self.current += 1
         if self.current >= 5:
             self.current = 0
 
-        
-
-
-class LargeMarket(Tile):
+class LargeMarket(Tile):  # TODO(matt): superclass for both markets
     """Special class for the Large Market tile. Allows players to sell resources for Lira depending
     on the amount of resources sold. The resource demand rotates through several tiles.
     Payouts for 1/2/3/4/5 resources are 3/7/12/18/25"""
@@ -351,14 +341,14 @@ class LargeMarket(Tile):
         self.name = "Large Market"
         self.demands = (
             ('R','B','B','G','Y'),
-            #TODO: add other tiles
+            # TODO: add other tiles
         )
         self.currnet = 0
 
-    #look at current demand and ask player what they want to sell
-    #check to make sure player has required resources
-    #remove resources and give Lira
-    #rotate demand
+    # look at current demand and ask player what they want to sell
+    # check to make sure player has required resources
+    # remove resources and give Lira
+    # rotate demand
     pass
 
 class PoliceStation(Tile):
@@ -368,11 +358,11 @@ class PoliceStation(Tile):
     def __init__(self):
         super().__init__()
         self.name = "Police Station"
-    #set all family members here on start
+    # set all family members here on start
 
-    #check that the player has a family member here, otherwise pass
-    #remove the family member and put them on another tile
-    #execute the tile action of that tile
+    # check that the player has a family member here, otherwise pass
+    # remove the family member and put them on another tile
+    # execute the tile action of that tile
     pass
 
 class SultansPalace(Tile):
@@ -388,10 +378,10 @@ class SultansPalace(Tile):
 
     def tile_action(self, player):
         current_cost = self.cost[:self.current]
-        #query player to see if they have the resources
-        #ask player what resources to spend for the any
-        #deduct resources and give gem
-        #increment current (note: if current >9 then there are no gems)
+        # query player to see if they have the resources
+        # ask player what resources to spend for the any
+        # deduct resources and give gem
+        # increment current (note: if current >9 then there are no gems)
     
     pass
 
@@ -410,10 +400,10 @@ class SmallMosque(Tile):
         self.red_cost = self.green_cost = 0
 
     def tile_action(self, player):
-        #ask player which tile (red/green) they would like to purchase
-        #get tile cost and check that player can pay for it
-        #deduct resources, flag the player for that building, increase cost
-        #if players has both buildings, give a gem if there is still one
+        # ask player which tile (red/green) they would like to purchase
+        # get tile cost and check that player can pay for it
+        # deduct resources, flag the player for that building, increase cost
+        # if players has both buildings, give a gem if there is still one
         pass
     pass
 
@@ -432,10 +422,10 @@ class GreatMosque(Tile):
         self.yellow_cost = self.blue_cost = 0
 
     def tile_action(self, player):
-        #ask player which tile (yellow/blue) they would like to purchase
-        #get tile cost and check that player can pay for it
-        #deduct resources, flag the player for that building, increase cost
-        #if players has both buildings, give a gem if there is still one
+        # ask player which tile (yellow/blue) they would like to purchase
+        # get tile cost and check that player can pay for it
+        # deduct resources, flag the player for that building, increase cost
+        # if players has both buildings, give a gem if there is still one
         pass
     pass
 
@@ -445,7 +435,7 @@ class GemstoneDealer(Tile):
     def __init__(self, num_players):
         super().__init__()
         self.name = "Gemstone Dealer"
-        self.cost = (12,13,14,15,16,17,18,19,20,21,22,23)
+        self.cost = (12,13,14,15,16,17,18,19,20,21,22,23) # TODO(matt): use range maybe
         if num_players >= 4:
             self.current = 0 
         elif num_players == 3:

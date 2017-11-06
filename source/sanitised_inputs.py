@@ -7,7 +7,7 @@ def input_from_list(question, answer):
         ui = input(question).lower()
     return ui
 
-def input_int_range(question,low,high):
+def input_int_range(question, low, high):
     """Takes in a question and makes sure the user input (ui) is withing
     a range of ints from low to high inclusive"""
     while True:
@@ -18,7 +18,7 @@ def input_int_range(question,low,high):
             print("Please enter an integer.")
             continue
         if ui < low or ui > high:
-            print("Please enter a value between {} and {}.".format(low,high))
+            print("Please enter a value between {} and {}.".format(low, high))
         else:
             break
     return ui
@@ -30,6 +30,4 @@ def input_yes_no(question):
     while ui not in ['yes', 'y', 'no', 'n']:
         print("Please choose yes or no")
         ui = input(question).lower()
-    if ui == 'yes' or ui == 'y':
-        return True
-    return False
+    return ui[0] == 'y'

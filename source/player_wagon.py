@@ -1,5 +1,8 @@
 class PlayerWagon:
-    
+    """A PlayerWagon tracks a player's resources, hand, assistants, merchants, and buildings"""
+
+    # TODO: Refactor helper methods to properties
+
     def __init__(self, color, player_number):
         self.color = color
         self.coins = 1 + player_number
@@ -8,7 +11,7 @@ class PlayerWagon:
         self.hand = []
         self.assistants = 4
         self.location = 'Fountain'
-        self.assist_locs = [] #empty because all with player atm
+        self.assist_locs = [] # empty because all with player atm
         self.red_building = self.yellow_building = self.green_building = self.blue_building = False
     
     def add_lira(self, lira):
@@ -82,7 +85,7 @@ class PlayerWagon:
         return self.assistants
 
     def get_resources(self):
-        #returns a list of resources [red, yellow, green, blue]
+        # returns a list of resources [red, yellow, green, blue]
         return [self.red,self.yellow,self.green,self.blue]
 
     def get_coins(self):
